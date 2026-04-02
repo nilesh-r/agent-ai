@@ -1,7 +1,24 @@
 # Sovereign AI — Career Agent Platform
 
-An AI-powered autonomous career management platform that discovers jobs, matches your resume using Gemini AI embeddings, finds recruiter contacts, and drafts personalized outreach emails.
+# Sovereign AI — Career Agent Platform
 
+The **Sovereign AI** project is an autonomous career management platform designed to automate the most tedious parts of finding a job. Instead of manually searching boards, adjusting your resume, and hunting for recruiter emails, this system acts as a personal AI pipeline that handles job discovery, semantic matching, and personalized cold-outreach asynchronously.
+
+## Why This Project? & How It Works
+The job search process today is incredibly repetitive. This project solves that by employing an **Agentic Pipeline**. You provide your profile/resume once, and the backend spins up a background worker (or "Agent") that continuously finds jobs, uses LLMs to score them against your resume, finds real human contacts for those jobs, and drafts personalized emails ready for you to send.
+
+## The Technology Stack: What We Use and Why
+
+| Layer | Technology | Why We Chose It |
+|-------|------------|-----------------|
+| **Frontend** | Next.js 16, React 19, Tailwind 4 | Next.js App Router provides extremely fast page loads and server-side features. Tailwind enables rapid implementation of premium, modern UI designs like the split-screen dashboard without writing custom CSS files. |
+| **Backend** | FastAPI, Python 3.11 | Python is the industry standard for AI and agent development. FastAPI provides lightning-fast performance, automatic API documentation, and strict type checking via Pydantic. |
+| **Database** | MongoDB | A NoSQL document database is perfect for storing unstructured, nested AI-generated data (like variable job postings, dynamic agent logs, and JSON-based AI match schemas) without needing rigid database migrations. |
+| **Queue** | Celery + Redis | AI API calls and web scraping often take 10-60 seconds. Doing this on the main web server would cause timeouts. Celery offloads these heavy agent workflows to background workers, while Redis acts as the fast message broker handling the queue. |
+| **AI Models** | Google Gemini | Used for LLM text generation (drafting emails, summarizing jobs) and Text Embeddings (mathematically scoring how well your resume matches a job description). It is extremely fast and cost-effective for multi-step agent chaining. |
+| **Job Data** | Adzuna API | Provides live, structured API access to thousands of current job postings. |
+| **Outreach** | Hunter.io API | Automatically scrapes and verifies current HR/Recruiter email addresses based on the job posting's company domain. |
+| **Auth** | JWT + Google OAuth | Allows seamless, secure "one-click" passwordless logins. |
 ## Architecture
 
 ```
@@ -48,6 +65,31 @@ An AI-powered autonomous career management platform that discovers jobs, matches
 | AI         | Google Gemini (text + embeddings) |
 | Auth       | JWT + Google OAuth 2.0            |
 | APIs       | Adzuna Jobs, Hunter.io, GitHub    |
+
+## Project Structure
+
+```text
+agent-ai/
+├── backend/                  # FastAPI Application
+│   ├── app/                  # Main application code
+│   │   ├── core/             # Security, settings, and JWT config
+│   │   ├── agents/           # AI Pipeline agents (Job, Match, HR, Email)
+│   │   ├── workers/          # Celery background workers
+│   │   └── main.py           # FastAPI entry point
+│   ├── requirements.txt      # Python dependencies
+│   ├── Dockerfile            # Backend container definition
+│   └── agent_local.db        # Local SQLite fallback/cache DB
+├── frontend/                 # Next.js 16 Application
+│   ├── src/                  # React source code
+│   │   ├── app/              # App Router (Pages & Layouts)
+│   │   └── components/       # Reusable UI components & Dashboard
+│   ├── package.json          # Node dependencies
+│   ├── tailwind.config.ts    # Tailwind v4 configuration
+│   └── Dockerfile            # Frontend container definition
+├── docker-compose.yml        # Orchestrates Frontend, Backend, Redis, MongoDB
+├── .env / .env.local         # Environment variables (do not commit)
+└── README.md                 # Project documentation
+```
 
 ## Quick Start
 
@@ -102,17 +144,33 @@ Open [http://localhost:3000](http://localhost:3000)
 |----------|---------|-------------|
 | `NEXT_PUBLIC_API_URL` | `http://localhost:8000` | Backend API URL |
 
-## Features
+## Step-by-Step AI Pipeline Breakdown
 
-- **Job Discovery** — Scrapes live jobs from Adzuna API based on your preferences
-- **Semantic Matching** — Uses Gemini embeddings to score jobs against your resume
-- **HR Contact Lookup** — Finds recruiter emails via Hunter.io API
-- **AI Email Drafting** — Generates personalized cold outreach using Gemini
-- **Code Analysis** — Reviews GitHub repos with AI-powered suggestions
-- **Live Pipeline** — Visual real-time workflow status on the dashboard
-- **Activity Logs** — Persistent activity logging stored in MongoDB
-- **Google OAuth** — One-click sign-in with Google
-- **Settings Dashboard** — Monitor which integrations are configured
+Here is a detailed breakdown of how the core AI pipeline operates asynchronously:
+
+### 1. Job Discovery (The Adzuna API)
+* **What it does:** Fetches real jobs instead of generic mock data.
+* **How it works:** When you submit your preferred job title (e.g., "Software Engineer") and location, the backend queries the Adzuna API. Adzuna acts as an aggregation engine, returning a massive list of jobs in JSON format, containing the exact job title, company name, location, and the full job description. 
+
+### 2. Semantic Matching (Google Gemini Text Embeddings)
+* **What it does:** Ranks the fetched jobs to see which ones *actually* match your specific resume logically, bypassing simple keyword matching.
+* **How it works:** Google Gemini takes the text of your resume and the text of a new job description and converts both into "Embeddings" (mathematical vectors that represent the *meaning* of the text). The backend compares your resume's vector against the job description's vector using cosine similarity. High similarity means a strong semantic match, allowing the system to discard bad matches.
+
+### 3. HR Contact Lookup (Hunter.io API)
+* **What it does:** Finds real people working at the company for cold outreach.
+* **How it works:** Once the system finds a great job match, it extracts the company name (e.g., "Acme Corp"). The backend uses Hunter.io to find the company's domain (`acmecorp.com`) and searches its database for email formats. It specifically targets email addresses mapped to titles like "Talent Acquisition," "Technical Recruiter," or "HR Manager".
+
+### 4. AI Email Drafting (Google Gemini Text Generation)
+* **What it does:** Drafts a highly personalized cold-outreach email tailored precisely to the job and company.
+* **How it works:** The backend provides Gemini with your resume, the job description, and the recruiter's contact info. By using a strict instructional prompt, Gemini returns a polished, ready-to-send cold email that naturally references why your past experience aligns perfectly with that specific role.
+
+### 5. Background Queue Orchestration (Celery & Redis)
+* **What it does:** Acts as the "traffic controller" so the application doesn't crash while executing the heavy pipeline.
+* **How it works:** Steps 1 through 4 are extremely time-consuming (fetching APIs, processing models). If the Next.js dashboard had to wait synchronously, the browser would time out. Instead, the FastAPI backend instantly hands the pipeline instructions to **Redis** (the fast message broker). **Celery** (the background worker) picks those instructions up, quietly runs the heavy logic in the background, and saves the final result securely in MongoDB for you to view in the dashboard.
+
+### 6. Security & State (JWT & MongoDB)
+* **What it does:** Keeps your pipeline data secure and isolated.
+* **How it works:** When you log in with Google OAuth, the backend issues you a JSON Web Token (JWT). Every time the frontend asks for your AI-generated emails or job matches, the backend strictly validates the JWT to find your specific user ID, ensuring that nobody else can see your tailored job records within the MongoDB database.
 
 ## License
 
