@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Agent Control Dashboard - Sovereign AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-tertiary-fixed": "#301400",
+                        "surface-dim": "#0f131c",
+                        "surface-container": "#1c2028",
+                        "primary": "#c0c1ff",
+                        "secondary-container": "#42447b",
+                        "on-surface": "#dfe2ee",
+                        "surface-container-highest": "#31353e",
+                        "surface-container-low": "#181c24",
+                        "tertiary-fixed": "#ffdcc5",
+                        "surface-bright": "#353942",
+                        "on-surface-variant": "#c7c4d7",
+                        "secondary-fixed": "#e1e0ff",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "surface-container-high": "#262a33",
+                        "inverse-primary": "#494bd6",
+                        "surface": "#0f131c",
+                        "on-tertiary-container": "#452000",
+                        "surface-container-lowest": "#0a0e16",
+                        "on-primary-fixed": "#07006c",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "surface-variant": "#31353e",
+                        "primary-container": "#8083ff",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "error": "#ffb4ab",
+                        "tertiary-container": "#d97721",
+                        "on-error": "#690005",
+                        "error-container": "#93000a",
+                        "on-primary": "#1000a9",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "on-tertiary": "#4f2500",
+                        "on-secondary-fixed-variant": "#404178",
+                        "inverse-surface": "#dfe2ee",
+                        "on-secondary-container": "#b2b3f2",
+                        "inverse-on-surface": "#2c3039",
+                        "background": "#0f131c",
+                        "tertiary": "#ffb783",
+                        "outline": "#908fa0",
+                        "on-secondary": "#292a60",
+                        "on-primary-container": "#0d0096",
+                        "secondary": "#c0c1ff",
+                        "primary-fixed": "#e1e0ff",
+                        "outline-variant": "#464554",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "surface-tint": "#c0c1ff",
+                        "on-background": "#dfe2ee",
+                        "on-secondary-fixed": "#13144a"
+                    },
+                    fontFamily: {
+                        "headline": ["Inter"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #0f131c; color: #dfe2ee; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        .glass-panel { background: rgba(49, 53, 62, 0.8); backdrop-filter: blur(12px); }
+        .workflow-line { background: repeating-linear-gradient(90deg, #464554, #464554 4px, transparent 4px, transparent 8px); height: 2px; }
+    </style>
+</head>
+<body class="flex min-h-screen">
+<!-- SideNavBar Component -->
+<aside class="fixed left-0 top-0 h-full flex flex-col w-[240px] bg-slate-900 dark:bg-[#0f131c] border-r-0 z-50">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-8 h-8 bg-gradient-to-br from-[#c0c1ff] to-[#8083ff] rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-[#0f131c] text-xl" data-icon="terminal">terminal</span>
+</div>
+<div>
+<h1 class="text-xl font-bold text-[#dfe2ee] font-['Inter'] tracking-tight">Sovereign AI</h1>
+<p class="text-[10px] uppercase tracking-widest text-[#c0c1ff] font-semibold">Career Agent Active</p>
+</div>
+</div>
+<nav class="space-y-1">
+<!-- Agent Control (Active) -->
+<a class="flex items-center gap-3 px-4 py-3 text-[#c0c1ff] bg-[#31353e] rounded-lg font-['Inter'] font-semibold tracking-tight transition-colors duration-200 scale-95 active:scale-90" href="#">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+<span>Agent Control</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#c7c4d7] hover:bg-[#1c2028] rounded-lg font-['Inter'] font-semibold tracking-tight transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="work">work</span>
+<span>Jobs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#c7c4d7] hover:bg-[#1c2028] rounded-lg font-['Inter'] font-semibold tracking-tight transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="mail">mail</span>
+<span>Emails</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#c7c4d7] hover:bg-[#1c2028] rounded-lg font-['Inter'] font-semibold tracking-tight transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="terminal">terminal</span>
+<span>Code AI</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-[#c7c4d7] hover:bg-[#1c2028] rounded-lg font-['Inter'] font-semibold tracking-tight transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span>Activity Logs</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 space-y-4">
+<div class="p-4 bg-[#181c24] rounded-xl">
+<p class="text-[11px] text-[#c7c4d7] mb-2">CURRENT PLAN</p>
+<p class="text-sm font-bold text-[#dfe2ee] mb-3">Professional Suite</p>
+<button class="w-full py-2 bg-[#31353e] hover:bg-[#3d424d] text-[#dfe2ee] text-xs font-bold rounded-lg transition-colors">Upgrade Plan</button>
+</div>
+<div class="flex items-center gap-3 px-2">
+<img alt="User profile" class="w-8 h-8 rounded-full border border-[#464554]" data-alt="professional headshot of a software engineer with glasses in a minimalist studio setting with soft blue lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGmm4MpYXeoiJvfwO-hWIK2lgpPZSeXUtsttWxsPMFqNliyagz4Ruk9OXs3eiN3LOAPdkILV5fILc1EKUVOj1UphXLTx6v1DJ_BYvxbb8fMYghKAMU_40_zB4jz_aHxsVZgLsGHd4Nf7-VdO6ji1k46glVkojYPEI4zNxB4OIkIOZbBWIr9epmqML3zxgpfIxz0xwXQDhJAMhFipXExmlntmhDn9gMPnJL8GxW4Uhc4tpk5mJxJTZEiLeIbrxJHeRtZHvK26-OoxO3"/>
+<div class="overflow-hidden">
+<p class="text-sm font-semibold truncate">Alex Chen</p>
+<p class="text-[10px] text-[#c7c4d7] truncate">Senior Arch @ Cloud</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 ml-[240px] flex flex-col bg-[#0f131c]">
+<!-- TopNavBar Component -->
+<header class="h-[72px] w-full sticky top-0 z-40 bg-slate-900/80 dark:bg-[#0f131c]/80 backdrop-blur-xl flex items-center justify-between px-8 shadow-2xl shadow-[#dfe2ee]/5">
+<div class="flex items-center gap-4">
+<h2 class="text-lg font-semibold text-[#dfe2ee] font-['Inter']">Orchestrator</h2>
+<div class="h-4 w-[1px] bg-[#464554]"></div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]"></span>
+<span class="text-[10px] font-bold tracking-widest text-emerald-500 uppercase">Live Pipeline</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="text-[#c7c4d7] hover:opacity-80 transition-opacity font-['Inter'] text-sm font-medium px-3 py-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="sync">sync</span>
+                    Sync Jobs
+                </button>
+<button class="bg-gradient-to-br from-[#c0c1ff] to-[#8083ff] text-[#0f131c] rounded-md px-6 py-2 font-['Inter'] text-sm font-bold hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined text-lg" data-icon="play_arrow" data-weight="fill" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+                    Run Agent
+                </button>
+</div>
+</header>
+<!-- Dashboard Body -->
+<div class="p-8 space-y-8 max-w-[1200px] mx-auto w-full">
+<!-- Stats Grid -->
+<div class="grid grid-cols-4 gap-6">
+<div class="bg-[#181c24] p-6 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-[11px] font-bold text-[#c7c4d7] uppercase tracking-wider mb-2">Jobs Found Today</p>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-extrabold text-[#dfe2ee]">42</span>
+<span class="text-xs text-emerald-400 font-medium">+12%</span>
+</div>
+</div>
+<span class="material-symbols-outlined absolute -right-2 -bottom-2 text-6xl text-[#31353e] opacity-20 group-hover:scale-110 transition-transform" data-icon="search">search</span>
+</div>
+<div class="bg-[#181c24] p-6 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-[11px] font-bold text-[#c7c4d7] uppercase tracking-wider mb-2">Emails Sent</p>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-extrabold text-[#dfe2ee]">128</span>
+<span class="text-xs text-[#c0c1ff] font-medium">Daily Limit: 200</span>
+</div>
+</div>
+<span class="material-symbols-outlined absolute -right-2 -bottom-2 text-6xl text-[#31353e] opacity-20 group-hover:scale-110 transition-transform" data-icon="send">send</span>
+</div>
+<div class="bg-[#181c24] p-6 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-[11px] font-bold text-[#c7c4d7] uppercase tracking-wider mb-2">Response Rate</p>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-extrabold text-[#dfe2ee]">18.4%</span>
+<span class="text-xs text-emerald-400 font-medium">Top 5%</span>
+</div>
+</div>
+<span class="material-symbols-outlined absolute -right-2 -bottom-2 text-6xl text-[#31353e] opacity-20 group-hover:scale-110 transition-transform" data-icon="analytics">analytics</span>
+</div>
+<div class="bg-[#181c24] p-6 rounded-xl relative overflow-hidden group">
+<div class="relative z-10">
+<p class="text-[11px] font-bold text-[#c7c4d7] uppercase tracking-wider mb-2">Avg Match Score</p>
+<div class="flex items-baseline gap-2">
+<span class="text-3xl font-extrabold text-[#dfe2ee]">94</span>
+<span class="text-xs text-[#c0c1ff] font-medium">/ 100</span>
+</div>
+</div>
+<span class="material-symbols-outlined absolute -right-2 -bottom-2 text-6xl text-[#31353e] opacity-20 group-hover:scale-110 transition-transform" data-icon="target">target</span>
+</div>
+</div>
+<!-- Agent Workflow Visualization -->
+<div class="bg-[#1c2028] rounded-xl p-8 shadow-inner">
+<div class="flex justify-between items-center mb-10">
+<h3 class="text-sm font-bold uppercase tracking-widest text-[#c7c4d7]">Active Pipeline: Career Orchestration</h3>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-emerald-500"></div><span class="text-[10px] font-semibold text-[#c7c4d7]">SUCCESS</span></div>
+<div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-amber-500"></div><span class="text-[10px] font-semibold text-[#c7c4d7]">RUNNING</span></div>
+<div class="flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-rose-500"></div><span class="text-[10px] font-semibold text-[#c7c4d7]">ERROR</span></div>
+</div>
+</div>
+<div class="relative flex items-start justify-between">
+<!-- Workflow Nodes -->
+<div class="flex flex-col items-center gap-3 relative z-10">
+<div class="w-14 h-14 bg-[#31353e] border-2 border-emerald-500 rounded-xl flex items-center justify-center text-emerald-500">
+<span class="material-symbols-outlined text-2xl" data-icon="travel_explore">travel_explore</span>
+</div>
+<p class="text-[11px] font-bold">Job Scraper</p>
+<div class="bg-[#0a0e16] p-2 rounded border border-[#464554] w-24">
+<p class="text-[8px] text-emerald-400 font-mono leading-tight">✓ 4,203 sources<br/>✓ Filter applied</p>
+</div>
+</div>
+<div class="mt-7 flex-1 workflow-line mx-2"></div>
+<div class="flex flex-col items-center gap-3 relative z-10">
+<div class="w-14 h-14 bg-[#31353e] border-2 border-emerald-500 rounded-xl flex items-center justify-center text-emerald-500">
+<span class="material-symbols-outlined text-2xl" data-icon="memory">memory</span>
+</div>
+<p class="text-[11px] font-bold">Matcher</p>
+<div class="bg-[#0a0e16] p-2 rounded border border-[#464554] w-24">
+<p class="text-[8px] text-emerald-400 font-mono leading-tight">✓ BERT Score: 0.94<br/>✓ 12 Top Matches</p>
+</div>
+</div>
+<div class="mt-7 flex-1 workflow-line mx-2"></div>
+<div class="flex flex-col items-center gap-3 relative z-10">
+<div class="w-14 h-14 bg-[#31353e] border-2 border-amber-500 rounded-xl flex items-center justify-center text-amber-500 animate-pulse">
+<span class="material-symbols-outlined text-2xl" data-icon="person_search">person_search</span>
+</div>
+<p class="text-[11px] font-bold">HR Finder</p>
+<div class="bg-[#0a0e16] p-2 rounded border border-[#464554] w-24">
+<p class="text-[8px] text-amber-400 font-mono leading-tight">○ Locating emails<br/>○ API Calling...</p>
+</div>
+</div>
+<div class="mt-7 flex-1 workflow-line mx-2 opacity-50"></div>
+<div class="flex flex-col items-center gap-3 relative z-10">
+<div class="w-14 h-14 bg-[#31353e] border-2 border-[#464554] rounded-xl flex items-center justify-center text-[#908fa0]">
+<span class="material-symbols-outlined text-2xl" data-icon="outgoing_mail">outgoing_mail</span>
+</div>
+<p class="text-[11px] font-bold text-[#c7c4d7]">Email Sender</p>
+<div class="bg-[#0a0e16] p-2 rounded border border-[#464554] w-24">
+<p class="text-[8px] text-[#c7c4d7] font-mono leading-tight">Pending HR<br/>data...</p>
+</div>
+</div>
+<div class="mt-7 flex-1 workflow-line mx-2 opacity-50"></div>
+<div class="flex flex-col items-center gap-3 relative z-10">
+<div class="w-14 h-14 bg-[#31353e] border-2 border-rose-500 rounded-xl flex items-center justify-center text-rose-500">
+<span class="material-symbols-outlined text-2xl" data-icon="code">code</span>
+</div>
+<p class="text-[11px] font-bold">Code Analyzer</p>
+<div class="bg-[#0a0e16] p-2 rounded border border-rose-900 w-24">
+<p class="text-[8px] text-rose-400 font-mono leading-tight">ERR: Invalid Git<br/>token response</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Tables & Panels -->
+<div class="grid grid-cols-12 gap-8">
+<!-- Jobs Table (Left) -->
+<div class="col-span-7 bg-[#1c2028] rounded-xl flex flex-col overflow-hidden shadow-xl">
+<div class="p-6 flex justify-between items-center bg-[#262a33]">
+<h3 class="text-sm font-bold tracking-tight">Recent Opportunities</h3>
+<button class="text-xs text-[#c0c1ff] hover:underline">View All Jobs</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-[#181c24] text-[#c7c4d7] text-[10px] uppercase tracking-widest font-bold">
+<tr>
+<th class="px-6 py-4">Job Title</th>
+<th class="px-6 py-4">Company</th>
+<th class="px-6 py-4">Match %</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-[#31353e]">
+<tr class="hover:bg-[#31353e]/30 transition-colors">
+<td class="px-6 py-4 text-sm font-medium">Senior Solutions Architect</td>
+<td class="px-6 py-4 text-sm text-[#c7c4d7]">Vercel</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-emerald-400">98%</span>
+<div class="w-12 h-1.5 bg-[#464554] rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500" style="width: 98%"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded bg-emerald-500/10 text-emerald-400 text-[10px] font-bold uppercase tracking-wider border border-emerald-500/20">Ready</span>
+</td>
+<td class="px-6 py-4">
+<button class="p-2 hover:bg-[#31353e] rounded-lg transition-colors text-[#c0c1ff]">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-[#31353e]/30 transition-colors">
+<td class="px-6 py-4 text-sm font-medium">Platform Engineer L5</td>
+<td class="px-6 py-4 text-sm text-[#c7c4d7]">Stripe</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-emerald-400">92%</span>
+<div class="w-12 h-1.5 bg-[#464554] rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500" style="width: 92%"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded bg-amber-500/10 text-amber-400 text-[10px] font-bold uppercase tracking-wider border border-amber-500/20">Scraping</span>
+</td>
+<td class="px-6 py-4">
+<button class="p-2 hover:bg-[#31353e] rounded-lg transition-colors text-[#c0c1ff]">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-[#31353e]/30 transition-colors">
+<td class="px-6 py-4 text-sm font-medium">Head of Developer Rel</td>
+<td class="px-6 py-4 text-sm text-[#c7c4d7]">Neon DB</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-emerald-400">89%</span>
+<div class="w-12 h-1.5 bg-[#464554] rounded-full overflow-hidden">
+<div class="h-full bg-emerald-500" style="width: 89%"></div>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 rounded bg-primary/10 text-primary text-[10px] font-bold uppercase tracking-wider border border-primary/20">Emailed</span>
+</td>
+<td class="px-6 py-4">
+<button class="p-2 hover:bg-[#31353e] rounded-lg transition-colors text-[#c0c1ff]">
+<span class="material-symbols-outlined text-lg" data-icon="visibility">visibility</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Email Panel (Right) -->
+<div class="col-span-5 bg-[#1c2028] rounded-xl flex flex-col shadow-xl border border-[#31353e]/30">
+<div class="p-6 bg-[#262a33] flex justify-between items-center">
+<div>
+<h3 class="text-sm font-bold tracking-tight">Active Outreach Preview</h3>
+<p class="text-[10px] text-[#c7c4d7]">To: Recruiting Manager @ Vercel</p>
+</div>
+<span class="px-2 py-1 bg-primary/20 text-primary text-[10px] font-bold rounded">DRAFT</span>
+</div>
+<div class="p-6 flex-1 bg-[#181c24] font-mono text-[11px] leading-relaxed text-[#c7c4d7] overflow-y-auto max-h-[200px]">
+                        Subject: Re-inventing Deployment Architectures - Alex Chen<br/><br/>
+                        Hi Jordan,<br/><br/>
+                        I've been tracking Vercel's recent edge computing updates. Given my background in scaling distributed systems at CloudScale, I've developed a custom orchestration layer that aligns perfectly with your "Ship in seconds" philosophy...<br/><br/>
+                        Specifically, I noticed your team is working on [Project X]. I have some ideas on how to optimize the cold-start latency by 14% using...
+                    </div>
+<div class="p-4 bg-[#262a33] flex items-center justify-between gap-3">
+<button class="flex-1 px-4 py-2 border border-[#464554] text-[#dfe2ee] rounded-lg text-xs font-bold hover:bg-[#31353e] transition-colors flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+                            Edit Template
+                        </button>
+<button class="flex-1 px-4 py-2 bg-gradient-to-br from-[#c0c1ff] to-[#8083ff] text-[#0f131c] rounded-lg text-xs font-bold hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="auto_awesome">auto_awesome</span>
+                            Approve &amp; Send
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer / System Status -->
+<footer class="mt-auto px-8 py-4 bg-[#0a0e16] border-t border-[#181c24] flex items-center justify-between">
+<div class="flex gap-6 text-[10px] text-[#c7c4d7] font-mono">
+<span class="flex items-center gap-2">CPU: <span class="text-emerald-400">12.4%</span></span>
+<span class="flex items-center gap-2">LATENCY: <span class="text-emerald-400">14ms</span></span>
+<span class="flex items-center gap-2">VERSION: <span class="text-primary">v4.2.0-stable</span></span>
+</div>
+<div class="flex items-center gap-4 text-[10px] text-[#908fa0] font-bold uppercase tracking-widest">
+<a class="hover:text-[#dfe2ee]" href="#">Docs</a>
+<a class="hover:text-[#dfe2ee]" href="#">API Settings</a>
+<span class="text-[#464554]">|</span>
+<span class="text-emerald-500">System Nominal</span>
+</div>
+</footer>
+</main>
+</body></html>
