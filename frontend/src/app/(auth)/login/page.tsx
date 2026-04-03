@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from "@/lib/api";
 
@@ -68,6 +68,18 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // ── Handle incoming Google OAuth token ──
+  useEffect(() => {
+    const token = searchParams.get("token");
+    if (token) {
+      // Set cookie on the frontend domain
+      document.cookie = `auth-token=${token}; path=/; max-age=1800; samesite=strict`;
+      // Immediately redirect to main dashboard
+      router.push("/");
+    }
+  }, [searchParams, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

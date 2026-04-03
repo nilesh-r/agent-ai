@@ -133,18 +133,10 @@ async def google_callback(request: Request, db: Database = Depends(get_db)):
         if "google_id" not in user:
             db.users.update_one({"_id": user["_id"]}, {"$set": {"google_id": info["sub"]}})
 
-    # Generate JWT & redirect
+    # Generate JWT & redirect to frontend login with token
+    # This allows the frontend to set the cookie on its own domain
     access_token = create_access_token(subject=user_id)
-    response = RedirectResponse(url=f"{settings.FRONTEND_URL}/")
-    response.set_cookie(
-        key="auth-token",
-        value=access_token,
-        max_age=1800,
-        samesite="lax",  # Fixed: Allowed during top-level cross-site redirect
-        secure=settings.is_production,  # Fixed: Must be True for HTTPS/Prod
-        httponly=False,  # Fixed: Allow client-side dashboard/middleware to read
-    )
-    return response
+    return RedirectResponse(url=f"{settings.FRONTEND_URL}/login?token={access_token}")
 
 
 # ── Local Auth ───────────────────────────────────────────────
