@@ -54,15 +54,15 @@ The job search process today is incredibly repetitive. This project solves that 
 
 ## Tech Stack
 
-| Layer      | Technology                        |
-|------------|-----------------------------------|
-| Frontend   | Next.js 16, React 19, Tailwind 4  |
-| Backend    | FastAPI, Pydantic, Python 3.11    |
-| Database   | MongoDB (PyMongo)                 |
-| Queue      | Celery + Redis                    |
-| AI         | Google Gemini (text + embeddings) |
-| Auth       | JWT + Google OAuth 2.0            |
-| APIs       | Adzuna Jobs, Hunter.io, GitHub    |
+| Layer      | Technology                          | Key Features                      |
+|------------|-------------------------------------|-----------------------------------|
+| Frontend   | Next.js 16, React 19, Tailwind 4    | Type-Safe architecture, Glassmorphism UI |
+| Backend    | FastAPI, Pydantic, Python 3.11      | Async matching, Structured responses |
+| Database   | MongoDB (PyMongo)                   | Dynamic AI-generated job archiving |
+| Queue      | Celery + Redis                      | Asynchronous agent pipeline sync  |
+| AI         | Google Gemini (text + embeddings)   | Semantic scoring & email drafting  |
+| Auth       | JWT + Google OAuth 2.0              | Secure dashboard access           |
+| APIs       | Adzuna Jobs, Hunter.io, GitHub      | Real-world data integration        |
 
 ## Project Structure
 
