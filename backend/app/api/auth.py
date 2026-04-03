@@ -13,8 +13,13 @@ from app.core.security import verify_password, create_access_token, get_password
 from app.core.config import get_settings
 from app.core.dependencies import get_current_user
 
-import os
-os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+# ── Google OAuth Bootstrap ───────────────────────────────────
+from app.core.config import get_settings
+settings = get_settings()
+
+if settings.is_localhost:
+    import os
+    os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 
 import requests as req
 from google.oauth2 import id_token
@@ -135,7 +140,9 @@ async def google_callback(request: Request, db: Database = Depends(get_db)):
         key="auth-token",
         value=access_token,
         max_age=1800,
-        samesite="strict",
+        samesite="lax",  # Fixed: Allowed during top-level cross-site redirect
+        secure=settings.is_production,  # Fixed: Must be True for HTTPS/Prod
+        httponly=False,  # Fixed: Allow client-side dashboard/middleware to read
     )
     return response
 

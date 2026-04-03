@@ -49,6 +49,16 @@ class Settings(BaseSettings):
     EMAIL_LIMIT_PER_DAY: int = 200
     OAUTHLIB_INSECURE_TRANSPORT: str = "1"
 
+    @property
+    def is_production(self) -> bool:
+        """Check if we are in production (not localhost)."""
+        return "localhost" not in self.FRONTEND_URL and "127.0.0.1" not in self.FRONTEND_URL
+
+    @property
+    def is_localhost(self) -> bool:
+        """Check if we are in local development."""
+        return not self.is_production
+
     model_config = {
         "env_file": ".env",
         "env_file_encoding": "utf-8",
