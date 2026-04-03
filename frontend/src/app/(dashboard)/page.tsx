@@ -2,13 +2,40 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { StatsData, PipelineNode, Job, Email } from "@/types";
+
+const STATUS_CONFIG: Record<string, { color: string; bg: string; icon?: string }> = {
+  success: { 
+    color: "emerald", 
+    bg: "bg-emerald-500 text-emerald-500 border-emerald-500", 
+    icon: "check_circle" 
+  },
+  running: { 
+    color: "amber", 
+    bg: "bg-amber-500 text-amber-500 border-amber-500 animate-pulse", 
+    icon: "sync" 
+  },
+  error: { 
+    color: "rose", 
+    bg: "bg-rose-500 text-rose-500 border-rose-500", 
+    icon: "error" 
+  },
+  idle: { 
+    color: "gray", 
+    bg: "bg-[#31353e] text-[#908fa0] border-[#464554]", 
+    icon: "pause_circle" 
+  },
+};
+
+const PIPELINE_ICONS = ["travel_explore", "memory", "person_search", "outgoing_mail", "code"];
 
 export default function Dashboard() {
-  const [stats, setStats] = useState({ jobsFound: 0, emailsSent: 0, responseRate: 0, avgMatch: 0 });
-  const [pipeline, setPipeline] = useState<any[]>([]);
-  const [jobs, setJobs] = useState<any[]>([]);
-  const [emails, setEmails] = useState<any[]>([]);
+  const [stats, setStats] = useState<StatsData>({ jobsFound: 0, emailsSent: 0, responseRate: 0, avgMatch: 0 });
+  const [pipeline, setPipeline] = useState<PipelineNode[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [emails, setEmails] = useState<Email[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadDashboard() {
@@ -21,10 +48,12 @@ export default function Dashboard() {
         ]);
         setStats(statsData || { jobsFound: 0, emailsSent: 0, responseRate: 0, avgMatch: 0 });
         setPipeline(pipelineData || []);
-        setJobs((jobsData || []).slice(0, 3)); // show top 3
-        setEmails((emailsData || []).slice(0, 1)); // show latest 1
+        setJobs((jobsData || []).slice(0, 3));
+        setEmails((emailsData || []).slice(0, 1));
+        setError(null);
       } catch (err) {
         console.error("Failed to load dashboard data", err);
+        setError("Unable to connect to the career agent service. Please check your connection.");
       } finally {
         setLoading(false);
       }
@@ -41,18 +70,8 @@ export default function Dashboard() {
     return () => clearInterval(interval);
   }, []);
 
-  const getStatusColor = (status: string) => {
-    if (status === "success") return "emerald";
-    if (status === "running") return "amber";
-    if (status === "error") return "rose";
-    return "gray"; // default/idle
-  };
-
   const getStatusBgColor = (status: string) => {
-    if (status === "success") return "bg-emerald-500 text-emerald-500 border-emerald-500";
-    if (status === "running") return "bg-amber-500 text-amber-500 border-amber-500 animate-pulse";
-    if (status === "error") return "bg-rose-500 text-rose-500 border-rose-500";
-    return "bg-[#31353e] text-[#908fa0] border-[#464554]";
+    return STATUS_CONFIG[status]?.bg || STATUS_CONFIG.idle.bg;
   };
 
   return (
@@ -118,13 +137,12 @@ export default function Dashboard() {
           </div>
         </div>
         <div className="relative flex items-start justify-between">
-          {pipeline.length > 0 ? pipeline.map((node: any, i: number) => {
-            const icons = ["travel_explore", "memory", "person_search", "outgoing_mail", "code"];
+          {pipeline.length > 0 ? pipeline.map((node, i) => {
             return (
               <React.Fragment key={node.id}>
                 <div className="flex flex-col items-center gap-3 relative z-10">
                   <div className={`w-14 h-14 border-2 rounded-xl flex items-center justify-center ${getStatusBgColor(node.status)} bg-opacity-20`}>
-                    <span className="material-symbols-outlined text-2xl">{icons[i]}</span>
+                    <span className="material-symbols-outlined text-2xl">{PIPELINE_ICONS[i] || "filter_vintage"}</span>
                   </div>
                   <p className={`text-[11px] font-bold ${node.status === 'idle' ? 'text-[#c7c4d7]' : ''}`}>{node.name}</p>
                 </div>
@@ -132,7 +150,9 @@ export default function Dashboard() {
               </React.Fragment>
             );
           }) : (
-            <div className="w-full text-center text-sm text-[#908fa0]">Loading pipeline...</div>
+            <div className="w-full text-center text-sm text-[#908fa0]">
+              {error ? <span className="text-rose-400">{error}</span> : "Initializing career orchestration pipeline..."}
+            </div>
           )}
         </div>
       </div>

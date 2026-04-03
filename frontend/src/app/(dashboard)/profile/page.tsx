@@ -1,10 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
+import { motion, Variants } from "framer-motion";
 import { api } from "@/lib/api";
+import { Profile } from "@/types";
 import { useToast } from "@/components/Toast";
 
 export default function ProfilePage() {
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
+
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const { showToast } = useToast();
@@ -26,6 +29,7 @@ export default function ProfilePage() {
   const handleSave = async () => {
     setSaving(true);
     try {
+      if (!profile) return;
       await api.updateProfile(profile);
       showToast("Profile saved successfully!", "success");
     } catch (err) {
@@ -50,10 +54,36 @@ export default function ProfilePage() {
     return <div className="p-8 text-rose-400 max-w-[1200px] mx-auto w-full">Failed to load profile data. Is the backend running?</div>;
   }
 
+  const itemVariant: Variants = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { type: "spring" as const, stiffness: 300, damping: 24 } }
+  };
+
   return (
-    <div className="p-8 space-y-8 max-w-[1200px] mx-auto w-full">
-      {/* HEADER SECTION */}
-      <div className="flex items-center gap-8 mb-8 pb-8 border-b border-outline-variant/30">
+    <div className="relative min-h-screen z-0">
+      {/* Animated Background Orbs */}
+      <motion.div 
+        animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.15, 0.1] }}
+        transition={{ repeat: Infinity, duration: 8, ease: "easeInOut" }}
+        className="fixed top-[-20%] left-[-10%] w-[500px] h-[500px] bg-primary rounded-full blur-[120px] pointer-events-none -z-10" 
+      />
+      <motion.div 
+        animate={{ scale: [1, 1.3, 1], opacity: [0.05, 0.1, 0.05] }}
+        transition={{ repeat: Infinity, duration: 12, ease: "easeInOut", delay: 2 }}
+        className="fixed bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-[#8083ff] rounded-full blur-[150px] pointer-events-none -z-10" 
+      />
+
+      <motion.div 
+        className="p-8 space-y-8 max-w-[1200px] mx-auto w-full relative z-10"
+        initial="hidden"
+        animate="show"
+        variants={{
+          hidden: { opacity: 0 },
+          show: { opacity: 1, transition: { staggerChildren: 0.1 } }
+        }}
+      >
+        {/* HEADER SECTION */}
+        <motion.div variants={itemVariant} className="flex flex-col sm:flex-row items-start sm:items-center gap-8 mb-8 pb-8 border-b border-outline-variant/30">
         <div className="relative group">
           <img alt="User profile" className="w-28 h-28 rounded-full border-2 border-primary/50 shadow-[0_0_20px_rgba(192,193,255,0.15)] object-cover bg-surface-dim" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGmm4MpYXeoiJvfwO-hWIK2lgpPZSeXUtsttWxsPMFqNliyagz4Ruk9OXs3eiN3LOAPdkILV5fILc1EKUVOj1UphXLTx6v1DJ_BYvxbb8fMYghKAMU_40_zB4jz_aHxsVZgLsGHd4Nf7-VdO6ji1k46glVkojYPEI4zNxB4OIkIOZbBWIr9epmqML3zxgpfIxz0xwXQDhJAMhFipXExmlntmhDn9gMPnJL8GxW4Uhc4tpk5mJxJTZEiLeIbrxJHeRtZHvK26-OoxO3" />
           <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
@@ -82,12 +112,13 @@ export default function ProfilePage() {
             />
           </div>
         </div>
-      </div>
+        </motion.div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* LEFT COLUMN */}
-        <div className="space-y-8">
-          <div className="bg-surface-container rounded-2xl p-7 border border-outline-variant/30 shadow-lg">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* LEFT COLUMN */}
+          <motion.div variants={itemVariant} className="space-y-8">
+            <div className="bg-surface-container/60 backdrop-blur-xl rounded-2xl p-7 border border-outline-variant/30 shadow-xl overflow-hidden relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-surface-container-highest/20 to-transparent pointer-events-none" />
             <h3 className="text-xl font-bold text-on-surface mb-1 flex items-center gap-2">
               <span className="material-symbols-outlined text-primary">target</span> Agent Targeting
             </h3>
@@ -140,12 +171,13 @@ export default function ProfilePage() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+            </div>
+          </motion.div>
 
-        {/* RIGHT COLUMN */}
-        <div className="space-y-8">
-          <div className="bg-surface-container rounded-2xl p-7 border border-outline-variant/30 shadow-lg flex flex-col h-full">
+          {/* RIGHT COLUMN */}
+          <motion.div variants={itemVariant} className="space-y-8">
+            <div className="bg-surface-container/60 backdrop-blur-xl rounded-2xl p-7 border border-outline-variant/30 shadow-xl flex flex-col h-full relative">
+              <div className="absolute inset-0 bg-gradient-to-br from-surface-container-highest/20 to-transparent pointer-events-none" />
             <h3 className="text-xl font-bold text-on-surface mb-1 flex items-center gap-2">
               <span className="material-symbols-outlined text-primary">description</span> Context Data
             </h3>
@@ -159,50 +191,54 @@ export default function ProfilePage() {
                 className="w-full h-full min-h-[250px] bg-surface-dim border border-outline-variant/50 rounded-xl p-4 text-sm text-on-surface font-mono placeholder:text-on-surface-variant/30 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all resize-none shadow-inner" 
               />
             </div>
-          </div>
+            </div>
+          </motion.div>
         </div>
-      </div>
 
-      <div className="bg-surface-container rounded-2xl p-7 border border-outline-variant/30 shadow-lg">
-        <h3 className="text-xl font-bold text-on-surface mb-1 flex items-center gap-2">
-          <span className="material-symbols-outlined text-primary">cable</span> System Integrations
-        </h3>
-        <p className="text-xs text-on-surface-variant mb-6">These core platforms are natively wired into your Orchestrator via environment configurations.</p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="p-4 bg-surface-dim rounded-xl border border-outline-variant/50 flex flex-col items-center justify-center gap-2 text-center hover:bg-surface-container-high transition-colors">
-            <span className="material-symbols-outlined text-3xl text-primary/70">mark_email_unread</span>
-            <span className="text-xs font-bold text-on-surface mt-1">Hunter.io</span>
-            <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">ACTIVE</span>
+        <motion.div variants={itemVariant} className="bg-surface-container/60 backdrop-blur-xl rounded-2xl p-7 border border-outline-variant/30 shadow-xl relative">
+          <div className="absolute inset-0 bg-gradient-to-br from-surface-container-highest/20 to-transparent pointer-events-none" />
+          <h3 className="text-xl font-bold text-on-surface mb-1 flex items-center gap-2 relative z-10">
+            <span className="material-symbols-outlined text-primary">cable</span> System Integrations
+          </h3>
+          <p className="text-xs text-on-surface-variant mb-6 relative z-10">These core platforms are natively wired into your Orchestrator via environment configurations.</p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
+            <motion.div whileHover={{ scale: 1.05, y: -4 }} className="p-4 bg-surface-dim/80 rounded-xl border border-outline-variant/40 flex flex-col items-center justify-center gap-2 text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-[0_10px_30px_rgba(192,193,255,0.1)] cursor-default">
+              <span className="material-symbols-outlined text-3xl text-primary/70">mark_email_unread</span>
+              <span className="text-xs font-bold text-on-surface mt-1">Hunter.io</span>
+              <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 shadow-[0_0_8px_rgba(16,185,129,0.3)]">ACTIVE</span>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05, y: -4 }} className="p-4 bg-surface-dim/80 rounded-xl border border-outline-variant/40 flex flex-col items-center justify-center gap-2 text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-[0_10px_30px_rgba(192,193,255,0.1)] cursor-default">
+              <span className="material-symbols-outlined text-3xl text-primary/70">smart_toy</span>
+              <span className="text-xs font-bold text-on-surface mt-1">Google Gemini</span>
+              <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 shadow-[0_0_8px_rgba(16,185,129,0.3)]">ACTIVE</span>
+            </motion.div>
+             <motion.div whileHover={{ scale: 1.05, y: -4 }} className="p-4 bg-surface-dim/80 rounded-xl border border-outline-variant/40 flex flex-col items-center justify-center gap-2 text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-[0_10px_30px_rgba(192,193,255,0.1)] cursor-default">
+              <span className="material-symbols-outlined text-3xl text-primary/70">travel_explore</span>
+              <span className="text-xs font-bold text-on-surface mt-1">Adzuna Jobs</span>
+              <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 shadow-[0_0_8px_rgba(16,185,129,0.3)]">ACTIVE</span>
+            </motion.div>
+            <motion.div whileHover={{ scale: 1.05, y: -4 }} className="p-4 bg-surface-dim/80 rounded-xl border border-outline-variant/40 flex flex-col items-center justify-center gap-2 text-center hover:border-primary/50 transition-colors shadow-sm hover:shadow-[0_10px_30px_rgba(192,193,255,0.1)] cursor-default">
+              <span className="material-symbols-outlined text-3xl text-primary/70">code</span>
+              <span className="text-xs font-bold text-on-surface mt-1">GitHub API</span>
+              <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20 shadow-[0_0_8px_rgba(16,185,129,0.3)]">ACTIVE</span>
+            </motion.div>
           </div>
-          <div className="p-4 bg-surface-dim rounded-xl border border-outline-variant/50 flex flex-col items-center justify-center gap-2 text-center hover:bg-surface-container-high transition-colors">
-            <span className="material-symbols-outlined text-3xl text-primary/70">smart_toy</span>
-            <span className="text-xs font-bold text-on-surface mt-1">Google Gemini</span>
-            <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">ACTIVE</span>
-          </div>
-           <div className="p-4 bg-surface-dim rounded-xl border border-outline-variant/50 flex flex-col items-center justify-center gap-2 text-center hover:bg-surface-container-high transition-colors">
-            <span className="material-symbols-outlined text-3xl text-primary/70">travel_explore</span>
-            <span className="text-xs font-bold text-on-surface mt-1">Adzuna Jobs</span>
-            <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">ACTIVE</span>
-          </div>
-          <div className="p-4 bg-surface-dim rounded-xl border border-outline-variant/50 flex flex-col items-center justify-center gap-2 text-center hover:bg-surface-container-high transition-colors">
-            <span className="material-symbols-outlined text-3xl text-primary/70">code</span>
-            <span className="text-xs font-bold text-on-surface mt-1">GitHub API</span>
-            <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">ACTIVE</span>
-          </div>
-        </div>
-      </div>
+        </motion.div>
 
-      {/* Save Button */}
-      <div className="flex justify-end pt-4 pb-12">
-        <button 
-          onClick={handleSave}
-          disabled={saving}
-          className="bg-gradient-to-r from-primary to-[#7074ff] text-surface-dim px-10 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_rgba(192,193,255,0.3)] hover:shadow-[0_0_30px_rgba(192,193,255,0.5)] hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-2 disabled:opacity-50 disabled:hover:translate-y-0 disabled:shadow-none"
-        >
-          {saving ? <span className="w-5 h-5 border-2 border-surface-dim/30 border-t-surface-dim rounded-full animate-spin"></span> : <span className="material-symbols-outlined text-lg">save</span>}
-          {saving ? "Saving Configuration..." : "Save Configuration"}
-        </button>
-      </div>
+        {/* Save Button */}
+        <motion.div variants={itemVariant} className="flex justify-end pt-4 pb-12">
+          <motion.button 
+            whileHover={saving ? {} : { scale: 1.05, filter: "brightness(1.1)" }}
+            whileTap={saving ? {} : { scale: 0.95 }}
+            onClick={handleSave}
+            disabled={saving}
+            className="bg-gradient-to-r from-primary to-[#7074ff] text-surface-dim px-10 py-3.5 rounded-xl text-sm font-bold shadow-[0_0_20px_rgba(192,193,255,0.3)] hover:shadow-[0_0_30px_rgba(192,193,255,0.5)] transition-all flex items-center gap-2 disabled:opacity-75 disabled:shadow-none"
+          >
+            {saving ? <span className="w-5 h-5 border-2 border-surface-dim/30 border-t-surface-dim rounded-full animate-spin"></span> : <span className="material-symbols-outlined text-lg">save</span>}
+            {saving ? "Saving Configuration..." : "Save Configuration"}
+          </motion.button>
+        </motion.div>
+      </motion.div>
     </div>
   );
 }

@@ -1,4 +1,7 @@
+import { StatsData, PipelineNode, Job, Email, User, Log, Profile, CodeAnalysisResult, LoginData, RegisterData } from "@/types";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
 
 function getCookie(name: string) {
   if (typeof document === "undefined") return null;
@@ -8,7 +11,7 @@ function getCookie(name: string) {
   return null;
 }
 
-export async function fetchApi(endpoint: string, options: RequestInit = {}) {
+export async function fetchApi<T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const token = getCookie("auth-token");
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -42,29 +45,29 @@ export async function fetchApi(endpoint: string, options: RequestInit = {}) {
 
 export const api = {
   // Auth
-  login: (data: any) =>
-    fetchApi("/auth/login", { method: "POST", body: JSON.stringify(data) }),
-  register: (data: any) =>
-    fetchApi("/auth/register", { method: "POST", body: JSON.stringify(data) }),
-  getMe: (token?: string) =>
-    fetchApi("/auth/me", token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
+  login: (data: LoginData): Promise<{ access_token: string }> =>
+    fetchApi<{ access_token: string }>("/auth/login", { method: "POST", body: JSON.stringify(data) }),
+  register: (data: RegisterData): Promise<User & { id: string }> =>
+    fetchApi<User & { id: string }>("/auth/register", { method: "POST", body: JSON.stringify(data) }),
+  getMe: (token?: string): Promise<User> =>
+    fetchApi<User>("/auth/me", token ? { headers: { Authorization: `Bearer ${token}` } } : {}),
 
   // Agents & Analytics
-  getJobs: () => fetchApi("/api/jobs"),
-  getStats: () => fetchApi("/api/stats"),
-  getPipelineStatus: () => fetchApi("/api/pipeline-status"),
-  getLogs: (limit = 100) => fetchApi(`/api/logs?limit=${limit}`),
-  getProfile: () => fetchApi("/api/profile"),
-  updateProfile: (data: any) =>
-    fetchApi("/api/profile", { method: "PUT", body: JSON.stringify(data) }),
-  analyzeRepo: (url: string) =>
-    fetchApi("/api/analyze-repo", { method: "POST", body: JSON.stringify({ url }) }),
-  getEmails: () => fetchApi("/api/emails"),
-  sendEmail: (emailId: string) =>
-    fetchApi(`/api/send-email/${emailId}`, { method: "POST" }),
-  runAgent: () =>
-    fetchApi("/api/run-agent", { method: "POST" }),
+  getJobs: (): Promise<Job[]> => fetchApi<Job[]>("/api/jobs"),
+  getStats: (): Promise<StatsData> => fetchApi<StatsData>("/api/stats"),
+  getPipelineStatus: (): Promise<PipelineNode[]> => fetchApi<PipelineNode[]>("/api/pipeline-status"),
+  getLogs: (limit = 100): Promise<Log[]> => fetchApi<Log[]>(`/api/logs?limit=${limit}`),
+  getProfile: (): Promise<Profile> => fetchApi<Profile>("/api/profile"),
+  updateProfile: (data: Partial<Profile> & { user_id?: string }): Promise<Profile> =>
+    fetchApi<Profile>("/api/profile", { method: "PUT", body: JSON.stringify(data) }),
+  analyzeRepo: (url: string): Promise<CodeAnalysisResult> =>
+    fetchApi<CodeAnalysisResult>("/api/analyze-repo", { method: "POST", body: JSON.stringify({ url }) }),
+  getEmails: (): Promise<Email[]> => fetchApi<Email[]>("/api/emails"),
+  sendEmail: (emailId: string): Promise<{ success: boolean; message: string }> =>
+    fetchApi<{ success: boolean; message: string }>(`/api/send-email/${emailId}`, { method: "POST" }),
+  runAgent: (): Promise<{ success: boolean; message: string }> =>
+    fetchApi<{ success: boolean; message: string }>("/api/run-agent", { method: "POST" }),
 
   // Settings
-  getIntegrationStatus: () => fetchApi("/api/settings/status"),
+  getIntegrationStatus: (): Promise<Record<string, boolean>> => fetchApi<Record<string, boolean>>("/api/settings/status"),
 };

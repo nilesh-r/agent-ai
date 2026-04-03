@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
 
@@ -36,28 +37,43 @@ export default function TopNavbar({ onMenuToggle }: { onMenuToggle?: () => void 
         </h2>
         <div className="h-4 w-[1px] bg-outline-variant hidden sm:block" />
         <div className="items-center gap-2 hidden sm:flex">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]" />
-          <span className="text-[10px] font-bold tracking-widest text-emerald-500 uppercase">
+          <span className="relative flex h-2.5 w-2.5">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 shadow-[0_0_12px_rgba(34,197,94,0.8)]"></span>
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+          </span>
+          <span className="text-[10px] font-bold tracking-widest text-emerald-500 uppercase drop-shadow-[0_0_4px_rgba(34,197,94,0.3)]">
             Live Pipeline
           </span>
         </div>
       </div>
       <div className="flex items-center gap-2 sm:gap-4">
-        <button
+        <motion.button
+          whileHover={running ? {} : { scale: 1.05, boxShadow: "0px 0px 20px rgba(192, 193, 255, 0.4)" }}
+          whileTap={running ? {} : { scale: 0.95 }}
           onClick={handleRunAgent}
           disabled={running}
-          className="bg-gradient-to-br from-[#c0c1ff] to-[#8083ff] text-surface-dim rounded-md px-4 sm:px-6 py-2 font-sans text-sm font-bold hover:opacity-90 transition-opacity flex items-center gap-2 disabled:opacity-50"
+          className="relative overflow-hidden bg-gradient-to-br from-[#c0c1ff] to-[#8083ff] text-surface-dim rounded-md px-4 sm:px-6 py-2 font-sans text-sm font-bold transition-all flex items-center gap-2 disabled:opacity-75 disabled:cursor-wait"
         >
-          <span
-            className="material-symbols-outlined text-lg"
+          {running && (
+            <motion.div
+              className="absolute inset-0 bg-white/20"
+              initial={{ x: "-100%" }}
+              animate={{ x: "100%" }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "linear" }}
+            />
+          )}
+          <motion.span
+            className="material-symbols-outlined text-lg relative z-10"
             style={{ fontVariationSettings: "'FILL' 1" }}
+            animate={running ? { rotate: 360 } : {}}
+            transition={running ? { repeat: Infinity, duration: 2, ease: "linear" } : {}}
           >
-            {running ? "hourglass_empty" : "play_arrow"}
-          </span>
-          <span className="hidden sm:inline">
+            {running ? "autorenew" : "play_arrow"}
+          </motion.span>
+          <span className="hidden sm:inline relative z-10">
             {running ? "Starting..." : "Run Agent"}
           </span>
-        </button>
+        </motion.button>
       </div>
     </header>
   );

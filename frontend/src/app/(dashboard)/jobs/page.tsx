@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
+import { Job } from "@/types";
 
 const tabs = ["All", "Matched", "Applied", "Archived"];
 
@@ -18,7 +19,8 @@ const barColor  = (m: number) => m >= 90 ? "bg-emerald-400" : m >= 80 ? "bg-ambe
 export default function JobsPage() {
   const [activeTab, setActiveTab] = useState("All");
   const [search, setSearch] = useState("");
-  const [allJobs, setAllJobs] = useState<any[]>([]);
+  const [allJobs, setAllJobs] = useState<Job[]>([]);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

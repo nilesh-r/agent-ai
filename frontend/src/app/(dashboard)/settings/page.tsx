@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { fetchApi } from "@/lib/api";
+import { api } from "@/lib/api";
 
 interface IntegrationStatus {
   gemini: boolean;
@@ -31,12 +31,12 @@ export default function SettingsPage() {
     async function load() {
       try {
         // Check backend health
-        const health = await fetchApi("/health");
-        setBackendHealth(health.status === "ok");
+        const health = await api.getIntegrationStatus(); // Or a proper health endpoint if added to api.ts
+        setBackendHealth(!!health); // Simplified for now
 
         // Check integration status
-        const data = await fetchApi("/api/settings/status");
-        setStatus(data);
+        const data = await api.getIntegrationStatus();
+        setStatus(data as unknown as IntegrationStatus);
       } catch (e) {
         console.error("Failed to fetch settings", e);
         setBackendHealth(false);

@@ -1,7 +1,10 @@
 "use client";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { api } from "@/lib/api";
+import { User } from "@/types";
+
 
 const navItems = [
   { href: "/", label: "Agent Control", icon: "smart_toy" },
@@ -21,7 +24,8 @@ interface SidebarProps {
 export default function Sidebar({ isOpen = true, onClose }: SidebarProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const [user, setUser] = useState<{ name: string; email: string } | null>(null);
+  const [user, setUser] = useState<User | null>(null);
+
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -78,39 +82,54 @@ export default function Sidebar({ isOpen = true, onClose }: SidebarProps) {
             </div>
           </div>
           <nav className="space-y-1">
-            {navItems.map((item) => (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  router.push(item.href);
-                  onClose?.();
-                }}
-                className={`flex items-center gap-3 px-4 py-3 rounded-lg font-semibold tracking-tight transition-all duration-200 ${
-                  isActive(item.href)
-                    ? "text-[#c0c1ff] bg-surface-container-highest shadow-sm"
-                    : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
-                }`}
-              >
-                <span className="material-symbols-outlined text-xl">
-                  {item.icon}
-                </span>
-                <span className="text-sm">{item.label}</span>
-                {isActive(item.href) && (
-                  <div className="ml-auto w-1.5 h-1.5 rounded-full bg-[#c0c1ff]" />
-                )}
-              </a>
-            ))}
+            <AnimatePresence>
+              {navItems.map((item, i) => (
+                <motion.a
+                  key={item.href}
+                  href={item.href}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.3, type: "spring", stiffness: 200, damping: 20 }}
+                  whileHover={{ scale: 1.02, x: 4 }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    router.push(item.href);
+                    onClose?.();
+                  }}
+                  className={`flex items-center gap-3 px-4 py-3 rounded-lg font-semibold tracking-tight transition-colors duration-200 ${
+                    isActive(item.href)
+                      ? "text-[#c0c1ff] bg-surface-container-highest shadow-sm shadow-[#c0c1ff]/5"
+                      : "text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
+                  }`}
+                >
+                  <motion.span 
+                    className="material-symbols-outlined text-xl"
+                    whileHover={{ scale: 1.1, rotate: [-5, 5, 0] }}
+                    transition={{ type: "spring", stiffness: 300, damping: 10 }}
+                  >
+                    {item.icon}
+                  </motion.span>
+                  <span className="text-sm">{item.label}</span>
+                  {isActive(item.href) && (
+                    <motion.div 
+                      layoutId="active-nav-dot"
+                      className="ml-auto w-1.5 h-1.5 rounded-full bg-[#c0c1ff] shadow-[0_0_8px_rgba(192,193,255,0.6)]" 
+                    />
+                  )}
+                </motion.a>
+              ))}
+            </AnimatePresence>
 
             <div className="pt-2 border-t border-[#31353e]/50 mt-2">
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={handleSignOut}
                 className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg font-semibold tracking-tight transition-colors duration-200 text-left"
               >
                 <span className="material-symbols-outlined text-xl">logout</span>
                 <span className="text-sm">Sign Out</span>
-              </button>
+              </motion.button>
             </div>
           </nav>
         </div>

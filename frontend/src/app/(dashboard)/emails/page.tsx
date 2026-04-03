@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { api } from "@/lib/api";
+import { Email } from "@/types";
 
 const statusStyle: Record<string, string> = {
   DRAFT:   "bg-primary/20 text-primary",
@@ -10,8 +11,8 @@ const statusStyle: Record<string, string> = {
 };
 
 export default function EmailsPage() {
-  const [emails, setEmails] = useState<any[]>([]);
-  const [selected, setSelected] = useState<any>(null);
+  const [emails, setEmails] = useState<Email[]>([]);
+  const [selected, setSelected] = useState<Email | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

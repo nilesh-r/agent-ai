@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { api } from "@/lib/api";
 import { useToast } from "@/components/Toast";
+import { CodeAnalysisResult, CodeSuggestion } from "@/types";
 
 const severityStyle: Record<string, string> = {
   HIGH: "text-rose-400 bg-rose-500/10 border border-rose-500/30",
@@ -25,7 +26,8 @@ export default function CodePage() {
   const [repoUrl, setRepoUrl] = useState("");
   const [analyzed, setAnalyzed] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [analysisResult, setAnalysisResult] = useState<any>(null);
+  const [analysisResult, setAnalysisResult] = useState<CodeAnalysisResult | null>(null);
+
   const { showToast } = useToast();
 
   const handleAnalyze = async () => {
@@ -112,7 +114,7 @@ export default function CodePage() {
           {/* Right: Suggestions */}
           <div className="col-span-2 space-y-4">
             <h3 className="text-xs font-bold uppercase tracking-widest text-outline">Gemini Improvement Suggestions</h3>
-            {analysisResult.suggestions?.map((s: any, i: number) => (
+            {analysisResult.suggestions?.map((s: CodeSuggestion, i: number) => (
               <div key={i} className="bg-surface-container rounded-xl p-4 border border-outline-variant/20 flex items-start gap-3">
                 <span className={`material-symbols-outlined text-xl mt-0.5 ${s.severity === 'error' ? 'text-rose-400' : 'text-primary'}`}>{getIcon(s.severity)}</span>
                 <div className="flex-1 min-w-0">

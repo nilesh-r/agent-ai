@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
+import { Log } from "@/types";
 
 export default function LogsPage() {
-  const [logs, setLogs] = useState<any[]>([]);
+  const [logs, setLogs] = useState<Log[]>([]);
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -64,7 +66,7 @@ export default function LogsPage() {
           )}
           {logs.map((log, i) => (
             <div key={i} className="flex items-center gap-4 px-6 py-3 hover:bg-surface-container transition-colors">
-              <span className="text-outline shrink-0">{log.time}</span>
+              <span className="text-outline shrink-0">{log.timestamp}</span>
               <div className="flex items-center gap-2 w-28 shrink-0">
                 <div className={`w-1.5 h-1.5 rounded-full ${dotStyles[log.level] || dotStyles.PENDING}`}></div>
                 <span className={`text-[10px] font-bold uppercase tracking-wider ${levelStyles[log.level] || levelStyles.PENDING}`}>{log.level}</span>
