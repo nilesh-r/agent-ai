@@ -1,6 +1,10 @@
-# Sovereign AI — Career Agent Platform
-
 The **Sovereign AI** project is an autonomous career management platform designed to automate the most tedious parts of finding a job. Instead of manually searching boards, adjusting your resume, and hunting for recruiter emails, this system acts as a personal AI pipeline that handles job discovery, semantic matching, and personalized cold-outreach asynchronously.
+
+![Dashboard Jobs](frontend/public/screenshots/dashboard-jobs.png)
+*Job Discovery and Matcher View*
+
+![Outreach Queue](frontend/public/screenshots/outreach-queue.png)
+*AI-Generated Outreach Preview*
 
 ## Why This Project? & How It Works
 The job search process today is incredibly repetitive. This project solves that by employing an **Agentic Pipeline**. You provide your profile/resume once, and the backend spins up a background worker (or "Agent") that continuously finds jobs, uses LLMs to score them against your resume, finds real human contacts for those jobs, and drafts personalized emails ready for you to send.
